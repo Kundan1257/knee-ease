@@ -1,0 +1,7 @@
+{
+  "name": "Knee-Ease",
+  "description": "A companion app for your wearable knee-lace, providing daily support, exercise routines, and AI-powered guidance for knee health.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
