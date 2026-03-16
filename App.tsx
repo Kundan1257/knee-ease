@@ -1,56 +1,88 @@
+import { useState } from "react";
+import Home from "./components/Home";
+import Exercises from "./components/Exercises";
+import Diet from "./components/Diet";
+import Help from "./components/Help";
+import HerbalTea from "./components/HerbalTea";
+import Relaxation from "./components/Relaxation";
+import AIChat from "./components/AIChat";
+import Dinner from "./components/Dinner";
 
-import React, { useState } from 'react';
-import { AppTab } from './types';
-import Home from './components/Home';
-import Exercises from './components/Exercises';
-import AIChat from './components/AIChat';
-import Theory from './components/Theory';
-import Navigation from './components/Navigation';
+export default function App() {
 
-const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<AppTab>('theory');
-  const [isWearing, setIsWearing] = useState(false);
+  const [tab, setTab] = useState<AppTab>("home");
+  const [showTea, setShowTea] = useState(false);
+  const [showDinner, setShowDinner] = useState(false);
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'theory':
-        return <Theory onGetStarted={() => setActiveTab('home')} />;
-      case 'home':
-        return <Home isWearing={isWearing} onToggleWear={() => setIsWearing(!isWearing)} />;
-      case 'exercises':
-        return <Exercises />;
-      case 'chat':
+  const renderTab = () => {
+
+    if (showTea) {
+      return <HerbalTea onBack={() => setShowTea(false)} />;
+    }
+
+    if (showDinner) {
+      return <Dinner />;
+    }
+
+    switch (tab) {
+
+      case "home":
+        return (
+          <Home
+            onOpenAI={() => setTab("ai")}
+            onExplorePremium={() => alert("Premium coming soon")}
+          />
+        );
+
+      case "exercise":
+        return (
+          <Exercises
+            onOpenRelaxation={() => setTab("relaxation")}
+          />
+        );
+
+      case "relaxation":
+        return <Relaxation />;
+
+      case "diet":
+        return (
+          <Diet
+            onOpenTea={() => setShowTea(true)}
+            onOpenDinner={() => setShowDinner(true)}
+          />
+        );
+
+      case "help":
+        return <Help />;
+
+      case "ai":
         return <AIChat />;
+
       default:
-        return <Theory onGetStarted={() => setActiveTab('home')} />;
+        return <Home />;
     }
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F4F9F4] max-w-md mx-auto relative shadow-2xl overflow-hidden border-x border-emerald-100/30">
-      {/* Header */}
-      <header className="sticky top-0 z-20 bg-white/70 backdrop-blur-xl border-b border-emerald-100/50 px-6 py-5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-tr from-emerald-400 to-teal-300 rounded-xl shadow-inner"></div>
-            <h1 className="text-xl font-bold text-slate-800 tracking-tight">Knee-Ease</h1>
-          </div>
-          <div className="flex items-center space-x-2 bg-emerald-50/50 px-3 py-1.5 rounded-full border border-emerald-100/50">
-            <span className={`w-2 h-2 rounded-full ${isWearing ? 'bg-emerald-400 animate-pulse' : 'bg-slate-300'}`}></span>
-            <span className="text-[10px] font-bold text-emerald-800/60 uppercase tracking-widest">{isWearing ? 'Synced' : 'Ready'}</span>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-100 flex justify-center">
+      <div className="w-full max-w-md bg-white shadow-lg flex flex-col">
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto pb-28">
-        {renderContent()}
-      </main>
+        <header className="bg-emerald-500 text-white text-center p-4 text-xl font-bold">
+          Knee-Ease
+        </header>
 
-      {/* Bottom Navigation */}
-      <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+        <main className="flex-1 overflow-y-auto p-4">
+          {renderTab()}
+        </main>
+
+        <nav className="border-t bg-white flex justify-around p-3 gap-3">
+          <button onClick={() => {setTab("home"); setShowTea(false); setShowDinner(false);}}>Home</button>
+          <button onClick={() => {setTab("exercise"); setShowTea(false); setShowDinner(false);}}>Exercise</button>
+          <button onClick={() => {setTab("diet"); setShowTea(false); setShowDinner(false);}}>Diet</button>
+          <button onClick={() => {setTab("help"); setShowTea(false); setShowDinner(false);}}>Help</button>
+        </nav>
+
+      </div>
     </div>
   );
-};
-
-export default App;
+}

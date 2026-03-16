@@ -6,54 +6,51 @@ interface TheoryProps {
 
 const Theory: React.FC<TheoryProps> = ({ onGetStarted }) => {
   return (
-    <div className="flex flex-col justify-between h-full px-6 py-10">
+    <div className="flex flex-col justify-between h-full px-5 py-8 bg-[#F4F9F4]">
 
-      {/* Top Section */}
+      {/* Header / Welcome */}
       <div className="space-y-6">
         <div className="text-center space-y-2">
-          <h2 className="text-2xl font-bold text-emerald-900">
+          <h2 className="text-3xl font-bold text-emerald-800">
             Welcome to Knee-Ease
           </h2>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-600">
             Gentle structure. Consistent recovery. Natural strength.
           </p>
         </div>
 
-        <div className="space-y-4 mt-8">
-          <div className="bg-white p-4 rounded-2xl shadow-sm border border-emerald-100">
-            <h4 className="font-semibold text-slate-700 text-sm">
-              Spiral Support
-            </h4>
-            <p className="text-xs text-slate-500 mt-1">
-              Stable wrapping that follows natural knee contours.
-            </p>
-          </div>
-
-          <div className="bg-white p-4 rounded-2xl shadow-sm border border-emerald-100">
-            <h4 className="font-semibold text-slate-700 text-sm">
-              Tactile Feedback
-            </h4>
-            <p className="text-xs text-slate-500 mt-1">
-              Encourages safer, more aware movement.
-            </p>
-          </div>
-
-          <div className="bg-white p-4 rounded-2xl shadow-sm border border-emerald-100">
-            <h4 className="font-semibold text-slate-700 text-sm">
-              Fluid Mobility
-            </h4>
-            <p className="text-xs text-slate-500 mt-1">
-              Maintains warmth and smooth joint motion.
-            </p>
-          </div>
+        {/* Features */}
+        <div className="flex flex-col gap-4 mt-6">
+          {[
+            {
+              title: 'Spiral Support',
+              desc: 'Stable wrapping that follows natural knee contours.'
+            },
+            {
+              title: 'Tactile Feedback',
+              desc: 'Encourages safer, more aware movement.'
+            },
+            {
+              title: 'Fluid Mobility',
+              desc: 'Maintains warmth and smooth joint motion.'
+            }
+          ].map((feature, i) => (
+            <div
+              key={i}
+              className="bg-white p-5 rounded-2xl shadow-md border border-emerald-100 hover:scale-[1.01] transition"
+            >
+              <h4 className="font-semibold text-emerald-700 text-base">{feature.title}</h4>
+              <p className="text-sm text-slate-500 mt-1">{feature.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Bottom Action */}
-      <div className="space-y-4 mt-10">
+      <div className="mt-8 space-y-3">
         <button
           onClick={onGetStarted}
-          className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-semibold active:scale-95 transition"
+          className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-semibold shadow-lg hover:bg-emerald-700 active:scale-95 transition"
         >
           Continue
         </button>

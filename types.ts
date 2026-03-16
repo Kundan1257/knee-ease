@@ -10,8 +10,8 @@ export interface Exercise {
 }
 
 export interface ChatMessage {
-  role: 'user' | 'model';
+  role: 'user' | 'assistant';
   content: string;
 }
 
-export type AppTab = 'theory' | 'home' | 'exercises' | 'chat';
+export type AppTab = "home" | "exercise" | "diet" | "tea";
