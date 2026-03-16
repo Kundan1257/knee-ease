@@ -7,15 +7,25 @@ import HerbalTea from "./components/HerbalTea";
 import Relaxation from "./components/Relaxation";
 import AIChat from "./components/AIChat";
 import Dinner from "./components/Dinner";
+import Contact from "./components/Contact";
+import Disclaimer from "./components/Disclaimer";
+
+type AppTab =
+  | "home"
+  | "exercise"
+  | "diet"
+  | "help"
+  | "ai"
+  | "relaxation"
+  | "contact"
+  | "disclaimer";
 
 export default function App() {
-
   const [tab, setTab] = useState<AppTab>("home");
   const [showTea, setShowTea] = useState(false);
   const [showDinner, setShowDinner] = useState(false);
 
   const renderTab = () => {
-
     if (showTea) {
       return <HerbalTea onBack={() => setShowTea(false)} />;
     }
@@ -25,7 +35,6 @@ export default function App() {
     }
 
     switch (tab) {
-
       case "home":
         return (
           <Home
@@ -35,11 +44,7 @@ export default function App() {
         );
 
       case "exercise":
-        return (
-          <Exercises
-            onOpenRelaxation={() => setTab("relaxation")}
-          />
-        );
+        return <Exercises onOpenRelaxation={() => setTab("relaxation")} />;
 
       case "relaxation":
         return <Relaxation />;
@@ -57,6 +62,12 @@ export default function App() {
 
       case "ai":
         return <AIChat />;
+
+      case "contact":
+        return <Contact />;
+
+      case "disclaimer":
+        return <Disclaimer />;
 
       default:
         return <Home />;
@@ -76,11 +87,55 @@ export default function App() {
         </main>
 
         <nav className="border-t bg-white flex justify-around p-3 gap-3">
-          <button onClick={() => {setTab("home"); setShowTea(false); setShowDinner(false);}}>Home</button>
-          <button onClick={() => {setTab("exercise"); setShowTea(false); setShowDinner(false);}}>Exercise</button>
-          <button onClick={() => {setTab("diet"); setShowTea(false); setShowDinner(false);}}>Diet</button>
-          <button onClick={() => {setTab("help"); setShowTea(false); setShowDinner(false);}}>Help</button>
+          <button
+            onClick={() => {
+              setTab("home");
+              setShowTea(false);
+              setShowDinner(false);
+            }}
+          >
+            Home
+          </button>
+
+          <button
+            onClick={() => {
+              setTab("exercise");
+              setShowTea(false);
+              setShowDinner(false);
+            }}
+          >
+            Exercise
+          </button>
+
+          <button
+            onClick={() => {
+              setTab("diet");
+              setShowTea(false);
+              setShowDinner(false);
+            }}
+          >
+            Diet
+          </button>
+
+          <button
+            onClick={() => {
+              setTab("help");
+              setShowTea(false);
+              setShowDinner(false);
+            }}
+          >
+            Help
+          </button>
         </nav>
+
+        <footer className="text-center text-sm text-gray-500 p-4 border-t">
+          <p>© 2026 Knee-Ease</p>
+
+          <div className="space-x-4 mt-2">
+            <button onClick={() => setTab("contact")}>Contact</button>
+            <button onClick={() => setTab("disclaimer")}>Disclaimer</button>
+          </div>
+        </footer>
 
       </div>
     </div>
