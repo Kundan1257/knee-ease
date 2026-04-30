@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-800 antialiased;
+    font-family: Inter, system-ui, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+
+  h1 {
+    @apply text-3xl font-bold tracking-tight text-slate-900;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold text-slate-900;
+  }
+
+  h3 {
+    @apply text-lg font-semibold text-slate-800;
+  }
+
+  p {
+    @apply text-base leading-7 text-slate-600;
+  }
+
+  button {
+    @apply transition-all duration-200;
+  }
+}
+body {
+  background: #f8fafc;
+}
+/* UI DESIGN SYSTEM (safe upgrade) */
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  border: 1px solid #eef2f7;
+}
+
+.section {
+  margin: 16px 0;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #64748b;
+}
+/* =========================
+   GLOBAL BASE
+========================= */
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #dff7f3 0%, #e8f5e9 45%, #eef6ff 100%);
+  color: #1e293b;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* =========================
+   TYPOGRAPHY
+========================= */
+
+h1, h2, h3 {
+  color: #0f172a;
+}
+
+p {
+  color: #475569;
+  line-height: 1.7;
+}
+
+/* =========================
+   CARD COMPONENT
+========================= */
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid #eef2f7;
+}
+
+/* =========================
+   GLASS EFFECT
+========================= */
+
+.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
+}
+
+/* =========================
+   SECTION (SAFE DEFAULT)
+   (no global forced colors)
+========================= */
+
+section {
+  margin: 16px 0;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+button,
+a button {
+  background: #059669;
+  color: white !important;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+button:hover,
+a button:hover {
+  background: #047857;
+}

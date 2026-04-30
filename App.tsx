@@ -76,9 +76,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center">
-      <div className="w-full max-w-md bg-white shadow-lg flex flex-col">
-
+    <div className="min-h-screen flex justify-center">
+  <div className="w-full max-w-md bg-white shadow-lg flex flex-col">
         <header className="bg-emerald-500 text-white text-center p-4 text-xl font-bold">
           Knee-Ease
         </header>
