@@ -42,7 +42,7 @@ import { getKneeCareTip, generateKneeContent } from './services/geminiService';
 
 // --- Context ---
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://thriving-rebirth-production.up.railway.app';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const AuthContext = React.createContext<{
   isLoggedIn: boolean;
@@ -195,9 +195,9 @@ const Navbar = () => {
   const { isLoggedIn, logout } = React.useContext(AuthContext);
 
   return (
-    <header className="bg-white border-b border-border/50 transition-all duration-300">
+    <header className="bg-white/95 backdrop-blur-sm border-b border-border/30 transition-all duration-300 sticky top-0 z-50">
       <div className="max-w-4xl mx-auto px-0 md:px-6">
-        <div className="flex flex-col md:flex-row justify-start md:justify-between items-start md:items-center min-h-[80px] md:h-20 nav-container">
+        <div className="flex justify-between items-center h-14 md:h-16 nav-container">
           <div className="flex items-center gap-2 py-4 md:py-0 logo-container">
             <AppLogo />
             <span className="font-bold text-primary tracking-tight">Knee-Care</span>
@@ -1413,7 +1413,7 @@ const ContactPage = () => (
         </p>
         <div className="bg-muted/50 p-6 rounded-2xl border border-border/50">
           <p className="text-primary font-bold">Email:</p>
-          <p className="text-accent font-medium">your-email@example.com</p>
+          <p className="text-accent font-medium">kneecare.help@gmail.com</p>
         </div>
         <p className="text-gray-600 leading-relaxed">
           We aim to respond as soon as possible.
