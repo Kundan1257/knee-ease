@@ -102,24 +102,12 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     const initAuth = async () => {
       const currentToken = localStorage.getItem('token');
       try {
-        if (currentToken) {
-          await refreshUser();
-        } else {
-          // Simple auto-login for demo if no session
-          const res = await fetch(`${API_URL}/auth/auto-login`, { method: 'POST' });
-          if (res.ok) {
-            const data = await res.json();
-            localStorage.setItem('token', data.token);
-            if (data.user_id) {
-              localStorage.setItem('user_id', data.user_id);
-            }
-            setToken(data.token);
-            await refreshUser();
-          } else {
-            console.error("Auto login failed with status:", res.status);
-          }
-        }
-      } catch (e) {
+  if (currentToken) {
+    await refreshUser();
+  } else {
+    return;
+  }
+} catch (e) {
         console.error("Auth initialization failed:", e);
       } finally {
         setIsLoading(false);
