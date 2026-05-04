@@ -2,7 +2,7 @@ import React from "react";
 
 const API_URL =
   import.meta.env.VITE_API_URL ||
-  "https://thriving-rebirth-production.up.railway.app";
+  "https://thriving-rebirth.up.railway.app";
 
 declare global {
   interface Window {

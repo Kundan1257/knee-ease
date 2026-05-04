@@ -43,7 +43,9 @@ import { getKneeCareTip, generateKneeContent } from './services/geminiService';
 
 // --- Context ---
 
-const API_URL = import.meta.env.VITE_API_URL || "https://thriving-rebirth-production.up.railway.app";
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://thriving-rebirth.up.railway.app";
 
 const AuthContext = React.createContext<{
   userId: string | null;
@@ -95,13 +97,20 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
         // OPTIONAL: fetch premium status from backend
         const res = await fetch(`${API_URL}/user/${storedUserId}`);
-        const data = await res.json();
 
-        if (res.ok) {
-          setIsPremiumState(data?.isPremium || false);
-        } else {
-          setIsPremiumState(false);
-        }
+let data = null;
+
+try {
+  data = await res.json();
+} catch (err) {
+  console.warn("Invalid JSON from /user:", err);
+}
+
+if (res.ok && data) {
+  setIsPremiumState(data?.isPremium || false);
+} else {
+  setIsPremiumState(false);
+}
 
       } catch (e) {
         console.error("Auth initialization failed:", e);
