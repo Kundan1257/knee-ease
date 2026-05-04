@@ -32,7 +32,7 @@ const AIChat: React.FC = () => {
   setInput("");
   setIsLoading(true);
 
-  console.log(import.meta.env.VITE_GROQ_API_KEY);
+  
 
   try {
    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {

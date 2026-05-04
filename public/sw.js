@@ -11,7 +11,5 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
 });
 
-self.addEventListener('fetch', (event) => {
-  // Pass-through: do nothing, let the browser handle the request normally.
-});
+
 

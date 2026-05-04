@@ -25,6 +25,28 @@ export default function App() {
   const [tab, setTab] = useState<AppTab>("home");
   const [showTea, setShowTea] = useState(false);
   const [showDinner, setShowDinner] = useState(false);
+const getTitle = () => {
+  switch (tab) {
+    case "home":
+      return "Knee-Care";
+    case "exercise":
+      return "Exercises";
+    case "diet":
+      return "Diet Plan";
+    case "help":
+      return "Help";
+    case "ai":
+      return "AI Assistant";
+    case "relaxation":
+      return "Relaxation";
+    case "contact":
+      return "Contact";
+    case "disclaimer":
+      return "Disclaimer";
+    default:
+      return "Knee-Care";
+  }
+};
 
   const renderTab = () => {
     if (showTea) {
@@ -40,7 +62,7 @@ export default function App() {
         return (
           <Home
             onOpenAI={() => setTab("ai")}
-            onExplorePremium={() => alert("Premium coming soon")}
+            onExplorePremium={() => setTab("premium")}
           />
         );
 
@@ -78,15 +100,15 @@ export default function App() {
   return (
     <div className="min-h-screen flex justify-center">
   <div className="w-full max-w-md bg-white shadow-lg flex flex-col">
-        <header className="bg-emerald-500 text-white text-center p-4 text-xl font-bold">
-          Knee-Ease
-        </header>
+        <header className="bg-emerald-500 text-white text-center py-2 text-sm font-semibold">
+  Knee-Care
+</header>
 
-        <main className="flex-1 overflow-y-auto p-4">
+        <main className="flex-1 overflow-y-auto p-4 pb-20">
           {renderTab()}
         </main>
 
-        <nav className="border-t bg-white flex justify-around p-3 gap-3">
+        <nav className="border-t bg-white flex justify-around p-3 gap-3 fixed bottom-0 left-0 right-0">
           <button
             onClick={() => {
               setTab("home");

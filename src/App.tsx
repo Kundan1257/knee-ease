@@ -2,6 +2,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
+ import PremiumPage from "./pages/PremiumPage";
 import HomeSection from "./sections/HomeSection";
 import React, { useState, useEffect, useRef, Component, ErrorInfo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
@@ -42,111 +43,96 @@ import { getKneeCareTip, generateKneeContent } from './services/geminiService';
 
 // --- Context ---
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "https://thriving-rebirth-production.up.railway.app";
 
 const AuthContext = React.createContext<{
-  isLoggedIn: boolean;
-  token: string | null;
-  user: any | null;
-  login: (token: string, user: any) => void;
-  logout: () => void;
-  isLoading: boolean;
-  refreshUser: () => Promise<void>;
+  userId: string | null;
+  isPremium: boolean;
+  setUserId: (id: string) => void;
+  setPremium: (value: boolean) => void;
 }>({
-  isLoggedIn: false,
-  token: null,
-  user: null,
-  login: () => {},
-  logout: () => {},
-  isLoading: true,
-  refreshUser: async () => {},
+  userId: null,
+  isPremium: false,
+  setUserId: () => {},
+  setPremium: () => {},
 });
 
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
-  const [user, setUser] = useState<any | null>(null);
+  // STATE
+  const [userId, setUserIdState] = useState<string | null>(
+    localStorage.getItem("userId")
+  );
+
+  const [isPremium, setIsPremiumState] = useState<boolean>(
+    localStorage.getItem("isPremium") === "true"
+  );
+
   const [isLoading, setIsLoading] = useState(true);
 
-  const refreshUser = React.useCallback(async () => {
-    const currentToken = localStorage.getItem('token');
-    const storedUserId = localStorage.getItem('user_id');
-    
-    if (!currentToken) {
-      setIsLoading(false);
-      return;
-    }
+  // FUNCTIONS
+  const setUserId = (id: string) => {
+    setUserIdState(id);
+    localStorage.setItem("userId", id);
+  };
 
-    try {
-      // Use the required /user/:id endpoint if we have it, otherwise fallback to /auth/me
-      const endpoint = storedUserId ? `${API_URL}/user/${storedUserId}` : `${API_URL}/auth/me`;
-      
-      const res = await fetch(endpoint, {
-        headers: { Authorization: "Bearer " + currentToken }
-      });
-      if (res.ok) {
-        const userData = await res.json();
-        setUser(userData);
-      } else {
-        localStorage.removeItem('token');
-        setToken(null);
-        setUser(null);
-      }
-    } catch (err) {
-      console.error("Profile fetch error:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const setPremium = (value: boolean) => {
+    setIsPremiumState(value);
+    localStorage.setItem("isPremium", String(value));
+  };
 
+  // INIT AUTH (CLEAN VERSION - NO JWT)
   useEffect(() => {
     const initAuth = async () => {
-      const currentToken = localStorage.getItem('token');
       try {
-  if (currentToken) {
-    await refreshUser();
-  } else {
-    return;
-  }
-} catch (e) {
+        let storedUserId = localStorage.getItem("userId");
+
+        if (!storedUserId) {
+          storedUserId = "user_" + Date.now();
+          localStorage.setItem("userId", storedUserId);
+        }
+
+        setUserIdState(storedUserId);
+
+        // OPTIONAL: fetch premium status from backend
+        const res = await fetch(`${API_URL}/user/${storedUserId}`);
+        const data = await res.json();
+
+        if (res.ok) {
+          setIsPremiumState(data?.isPremium || false);
+        } else {
+          setIsPremiumState(false);
+        }
+
+      } catch (e) {
         console.error("Auth initialization failed:", e);
       } finally {
         setIsLoading(false);
       }
     };
+
     initAuth();
-  }, [refreshUser]);
-
-  const login = React.useCallback((newToken: string, userData: any) => {
-    setToken(newToken);
-    setUser(userData);
-    localStorage.setItem('token', newToken);
-    if (userData && userData.user_id) {
-      localStorage.setItem('user_id', userData.user_id);
-    }
   }, []);
 
-  const logout = React.useCallback(() => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user_id');
-    window.location.reload();
-  }, []);
+  // LOADING SAFE GUARD
+  if (isLoading) return null;
 
+  // PROVIDER
   return (
-    <AuthContext.Provider value={{ 
-      isLoggedIn: !!token, 
-      token, 
-      user, 
-      login, 
-      logout,
-      isLoading,
-      refreshUser
-    }}>
+    <AuthContext.Provider
+      value={{
+        userId,
+        isPremium,
+        setUserId,
+        setPremium,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
+
+
+
 
 // --- Components ---
 
@@ -699,6 +685,11 @@ const HomePage = React.memo(() => (
         Simple steps for stronger, healthier knees.
       </motion.p>
     </header>
+    <Link to="/premium">
+  <button className="w-full bg-emerald-500 text-white py-2 rounded mb-8">
+    Unlock Premium Access
+  </button>
+</Link>
 
     <Card className="mb-10 bg-white/70 backdrop-blur-sm shadow-xl border-none overflow-hidden relative">
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent" />
@@ -1457,7 +1448,9 @@ function AppContent() {
               <Route path="/help" element={<HelpPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/privacy" element={<PrivacyPolicyPage />} />
-              <Route path="/contact" element={<ContactPage />} />
+            
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/premium" element={<PremiumPage />} />
             </Routes>
           </AnimatePresence>
         </main>
