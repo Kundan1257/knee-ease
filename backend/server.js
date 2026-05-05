@@ -32,9 +32,28 @@ mongoose.connect(process.env.MONGO_URI)
 
 /* ---------------- RAZORPAY ---------------- */
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
+app.post("/payment/create-order", async (req, res) => {
+  try {
+    const Razorpay = require("razorpay");
+console.log("KEY:", process.env.RAZORPAY_KEY_ID);
+console.log("SECRET LENGTH:", process.env.RAZORPAY_KEY_SECRET?.length);
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+
+    const order = await razorpay.orders.create({
+      amount: 499 * 100,
+      currency: "INR",
+      receipt: "rcpt_" + Date.now(),
+    });
+
+    res.json({ success: true, order });
+
+  } catch (err) {
+    console.log("Create order error:", err);
+    res.status(500).json({ success: false });
+  }
 });
 
 /* ---------------- MODEL ---------------- */
@@ -86,44 +105,27 @@ app.post("/payment/create-order", async (req, res) => {
   }
 });
 
-app.post("/payment/verify-payment", async (req, res) => {
+app.post("/payment/create-order", async (req, res) => {
   try {
-    const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-      userId
-    } = req.body;
+    console.log("BODY:", req.body);
 
-    const body = `${razorpay_order_id}|${razorpay_payment_id}`;
+    const amount = req.body?.amount;
 
-    const expected = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(body)
-      .digest("hex");
-
-    if (expected !== razorpay_signature) {
-      return res.status(400).json({ success: false });
+    if (!amount || isNaN(amount)) {
+      return res.status(400).json({ error: "Invalid amount" });
     }
 
-    await User.findOneAndUpdate(
-      { userId },
-      { isPremium: true },
-      { upsert: true }
-    );
+    const options = {
+      amount: Number(amount) * 100,
+      currency: "INR",
+      receipt: "receipt_" + Date.now(),
+    };
 
-    res.json({ success: true });
+    const order = await razorpay.orders.create(options);
 
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ success: false });
+    res.json(order);
+  } catch (error) {
+    console.error("CREATE ORDER ERROR:", error);
+    res.status(500).json({ error: error.message });
   }
-});
-
-/* ---------------- START ---------------- */
-
-const PORT = process.env.PORT || 8080;
-
-app.listen(PORT, "0.0.0.0", () => {
-  console.log("Server running on", PORT);
 });
