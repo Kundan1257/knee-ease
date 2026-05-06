@@ -78,7 +78,7 @@ app.post("/api/payment/create-order", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("❌ CREATE ORDER ERROR:", error);
+    console.error("❌ CREATE ORDER ERROR:", error?.error || error);
 
     return res.status(500).json({
       success: false,

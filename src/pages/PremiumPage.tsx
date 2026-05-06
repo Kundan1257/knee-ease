@@ -24,7 +24,7 @@ if (!userId) {
   return;
 }
 
-    const orderRes = await fetch(`${API_URL}/payment/create-order`, {
+    const orderRes = await fetch(`${API_URL}/api/payment/create-order`, {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
