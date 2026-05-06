@@ -51,7 +51,7 @@ const razorpay = new Razorpay({
 
 /* ---------------- PAYMENT ROUTE ---------------- */
 
-app.post("/payment/create-order", async (req, res) => {
+app.post("/api/payment/create-order", async (req, res) => {
   try {
     console.log("🔥 Payment request received:", req.body);
 
