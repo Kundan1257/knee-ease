@@ -9,6 +9,18 @@ dotenv.config();
 
 const app = express();
 
+/* ---------------- SAFETY DEBUG (CRASH TRACE) ---------------- */
+
+console.log("🔥 SERVER FILE STARTED");
+
+process.on("uncaughtException", (err) => {
+  console.error("💥 UNCAUGHT EXCEPTION:", err);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.error("💥 UNHANDLED REJECTION:", err);
+});
+
 /* ---------------- MIDDLEWARE ---------------- */
 
 app.use(cors({
@@ -19,7 +31,7 @@ app.use(cors({
 
 app.use(express.json());
 
-/* ---------------- ENV DEBUG (SAFE) ---------------- */
+/* ---------------- ENV DEBUG ---------------- */
 
 console.log("RAZORPAY KEY ID:", process.env.RAZORPAY_KEY_ID);
 console.log("RAZORPAY SECRET EXISTS:", !!process.env.RAZORPAY_KEY_SECRET);
@@ -30,14 +42,14 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected ✅"))
   .catch(err => console.log("MongoDB Error ❌", err));
 
-/* ---------------- RAZORPAY INSTANCE (ONLY ONCE) ---------------- */
+/* ---------------- RAZORPAY INSTANCE ---------------- */
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-/* ---------------- PAYMENT ROUTE (ONLY ONE) ---------------- */
+/* ---------------- PAYMENT ROUTE ---------------- */
 
 app.post("/payment/create-order", async (req, res) => {
   try {
