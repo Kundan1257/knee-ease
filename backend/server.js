@@ -2,7 +2,8 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import crypto from "crypto";
-import Razorpay from "razorpay";
+import pkg from "razorpay";
+const Razorpay = pkg;
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -45,8 +46,8 @@ mongoose.connect(process.env.MONGO_URI)
 /* ---------------- RAZORPAY INSTANCE ---------------- */
 
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
+  key_id: process.env.RAZORPAY_KEY_ID.trim(),
+  key_secret: process.env.RAZORPAY_KEY_SECRET.trim(),
 });
 
 /* ---------------- PAYMENT ROUTE ---------------- */
