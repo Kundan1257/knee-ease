@@ -2,8 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import crypto from "crypto";
-import pkg from "razorpay";
-const Razorpay = pkg;
+import Razorpay from "razorpay";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -46,14 +45,15 @@ mongoose.connect(process.env.MONGO_URI)
 /* ---------------- RAZORPAY INSTANCE ---------------- */
 
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID.trim(),
-  key_secret: process.env.RAZORPAY_KEY_SECRET.trim(),
+  key_id: String(process.env.RAZORPAY_KEY_ID).trim(),
+  key_secret: String(process.env.RAZORPAY_KEY_SECRET).trim(),
 });
 
 /* ---------------- PAYMENT ROUTE ---------------- */
 
 app.post("/api/payment/create-order", async (req, res) => {
   try {
+    console.log("✅ Razorpay instance created");
     console.log("🔥 Payment request received:", req.body);
 
     const amount = req.body?.amount;
@@ -124,7 +124,7 @@ app.get("/user/:userId", async (req, res) => {
 /* ---------------- SERVER START ---------------- */
 
 const PORT = process.env.PORT || 8080;
-
+console.log("✅ About to start server");
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
 });
