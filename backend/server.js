@@ -55,18 +55,15 @@ const razorpay = new Razorpay({
 /* ---------------- PAYMENT ROUTE ---------------- */
 
 app.post("/api/payment/create-order", async (req, res) => {
+
   try {
-    console.log("✅ Razorpay instance created");
-    console.log("🔥 Payment request received:", req.body);
+
+    console.log("🔥 PAYMENT ROUTE HIT");
+    console.log("BODY:", req.body);
 
     const amount = req.body?.amount;
 
-    if (!amount || isNaN(amount)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid amount"
-      });
-    }
+    console.log("AMOUNT:", amount);
 
     const options = {
       amount: Number(amount) * 100,
@@ -74,7 +71,11 @@ app.post("/api/payment/create-order", async (req, res) => {
       receipt: "receipt_" + Date.now(),
     };
 
+    console.log("OPTIONS:", options);
+
     const order = await razorpay.orders.create(options);
+
+    console.log("✅ ORDER CREATED:", order.id);
 
     return res.json({
       success: true,
@@ -83,23 +84,17 @@ app.post("/api/payment/create-order", async (req, res) => {
 
   } catch (error) {
 
-  console.log("❌ RAZORPAY ERROR START ❌");
+    console.log("❌ CREATE ORDER FAILED");
 
-  console.log("TYPE:", typeof error);
+    console.log("MESSAGE:", error?.message);
 
-  console.log("MESSAGE:", error?.message);
+    console.log("ERROR:", error);
 
-  console.log("STACK:", error?.stack);
-
-  console.log("FULL:", JSON.stringify(error, null, 2));
-
-  console.log("❌ RAZORPAY ERROR END ❌");
-
-  return res.status(500).json({
-    success: false,
-    message: error?.message || "Order creation failed"
-  });
-}
+    return res.status(500).json({
+      success: false,
+      message: error?.message || "Order creation failed"
+    });
+  }
 });
 
 /* ---------------- USER MODEL ---------------- */
