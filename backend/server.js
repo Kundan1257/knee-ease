@@ -33,7 +33,10 @@ app.use(express.json());
 
 /* ---------------- ENV DEBUG ---------------- */
 
-console.log("RAZORPAY KEY ID:", process.env.RAZORPAY_KEY_ID);
+console.log(
+  "RAZORPAY KEY ID:",
+  JSON.stringify(process.env.RAZORPAY_KEY_ID)
+);
 console.log("RAZORPAY SECRET EXISTS:", !!process.env.RAZORPAY_KEY_SECRET);
 
 /* ---------------- DB ---------------- */
@@ -80,15 +83,17 @@ app.post("/api/payment/create-order", async (req, res) => {
 
   } catch (error) {
 
-  console.log("❌ FULL ERROR START ❌");
+  console.log("❌ RAZORPAY ERROR START ❌");
 
-  console.log("message:", error?.message);
+  console.log("TYPE:", typeof error);
 
-  console.log("description:", error?.description);
+  console.log("MESSAGE:", error?.message);
 
-  console.log("error object:", error);
+  console.log("STACK:", error?.stack);
 
-  console.log("❌ FULL ERROR END ❌");
+  console.log("FULL:", JSON.stringify(error, null, 2));
+
+  console.log("❌ RAZORPAY ERROR END ❌");
 
   return res.status(500).json({
     success: false,
