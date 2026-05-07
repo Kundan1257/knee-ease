@@ -79,12 +79,19 @@ app.post("/api/payment/create-order", async (req, res) => {
 
   } catch (error) {
 
-  console.error("❌ FULL RAZORPAY ERROR:");
-  console.error(error);
+  console.log("❌ FULL ERROR START ❌");
+
+  console.log("message:", error?.message);
+
+  console.log("description:", error?.description);
+
+  console.log("error object:", error);
+
+  console.log("❌ FULL ERROR END ❌");
 
   return res.status(500).json({
     success: false,
-    error: error?.error || error?.message || error
+    message: error?.message || "Order creation failed"
   });
 }
 });
