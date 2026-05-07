@@ -24,14 +24,10 @@ process.on("unhandledRejection", (err) => {
 app.use(cors());
 app.use(express.json());
 
-/* ---------------- ENV CHECK ---------------- */
+/* ---------------- ENV SAFETY CHECK ---------------- */
 
-if (
-  !process.env.RAZORPAY_KEY_ID ||
-  !process.env.RAZORPAY_KEY_SECRET ||
-  !process.env.MONGO_URI
-) {
-  console.error("Missing ENV variables");
+if (!process.env.MONGO_URI) {
+  console.error("MONGO_URI missing");
   process.exit(1);
 }
 
@@ -44,43 +40,21 @@ mongoose.connect(process.env.MONGO_URI)
 /* ---------------- RAZORPAY ---------------- */
 
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID.trim(),
-  key_secret: process.env.RAZORPAY_KEY_SECRET.trim(),
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 /* ---------------- USER MODEL ---------------- */
 
-const userSchema = new mongoose.Schema({
+const User = mongoose.model("User", {
   userId: String,
-  isPremium: { type: Boolean, default: false },
+  isPremium: { type: Boolean, default: false }
 });
-
-const User = mongoose.model("User", userSchema);
 
 /* ---------------- HEALTH ---------------- */
 
 app.get("/", (req, res) => {
   res.send("Backend running 🚀");
-});
-
-/* ---------------- GET USER ---------------- */
-
-app.get("/user/:userId", async (req, res) => {
-  try {
-    const user = await User.findOne({ userId: req.params.userId });
-
-    res.json({
-      success: true,
-      userId: req.params.userId,
-      isPremium: user?.isPremium || false,
-    });
-
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch user",
-    });
-  }
 });
 
 /* ---------------- CREATE ORDER ---------------- */
@@ -90,44 +64,36 @@ app.post("/api/payment/create-order", async (req, res) => {
 
     const amount = Number(req.body.amount);
 
-    if (!amount || amount <= 0) {
+    if (!amount) {
       return res.status(400).json({
         success: false,
-        message: "Invalid amount",
+        message: "Invalid amount"
       });
     }
 
-    const options = {
+    const order = await razorpay.orders.create({
       amount: amount * 100,
       currency: "INR",
-      receipt: `receipt_${Date.now()}`,
-    };
+      receipt: `receipt_${Date.now()}`
+    });
 
-    const order = await razorpay.orders.create(options);
-
-    console.log("Order Created:", order.id);
-
-    res.json({
+    return res.json({
       success: true,
       order: {
         id: order.id,
         amount: order.amount,
-        currency: order.currency,
+        currency: order.currency
       },
-      key: process.env.RAZORPAY_KEY_ID,
+      key: process.env.RAZORPAY_KEY_ID
     });
 
   } catch (err) {
-    console.error("Create Order Error ❌", err);
-
-    res.status(500).json({
-      success: false,
-      message: "Order creation failed",
-    });
+    console.error(err);
+    res.status(500).json({ success: false });
   }
 });
 
-/* ---------------- VERIFY PAYMENT (IMPORTANT) ---------------- */
+/* ---------------- VERIFY PAYMENT ---------------- */
 
 app.post("/api/payment/verify-payment", async (req, res) => {
   try {
@@ -143,13 +109,13 @@ app.post("/api/payment/verify-payment", async (req, res) => {
 
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(body.toString())
+      .update(body)
       .digest("hex");
 
     if (expectedSignature !== razorpay_signature) {
       return res.status(400).json({
         success: false,
-        message: "Invalid signature",
+        message: "Invalid signature"
       });
     }
 
@@ -159,25 +125,24 @@ app.post("/api/payment/verify-payment", async (req, res) => {
       { upsert: true }
     );
 
-    res.json({
+    return res.json({
       success: true,
-      message: "Payment verified & premium activated",
+      message: "Premium activated"
     });
 
   } catch (err) {
-    console.error("Verify Error ❌", err);
-
+    console.error(err);
     res.status(500).json({
       success: false,
-      message: "Verification failed",
+      message: "Verification failed"
     });
   }
 });
 
-/* ---------------- SERVER ---------------- */
+/* ---------------- START ---------------- */
 
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
+  console.log("Server running on", PORT);
 });
