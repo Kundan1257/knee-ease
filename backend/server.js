@@ -95,46 +95,43 @@ app.post("/api/payment/create-order", async (req, res) => {
 
 /* ---------------- VERIFY PAYMENT ---------------- */
 
-app.post("/api/payment/verify-payment", async (req, res) => {
+app.post("/api/payment/create-order", async (req, res) => {
+
   try {
 
-    const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-      userId
-    } = req.body;
+    console.log("CREATE ORDER HIT");
+    console.log("BODY:", req.body);
 
-    const body = razorpay_order_id + "|" + razorpay_payment_id;
+    const amount = Number(req.body.amount);
 
-    const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(body)
-      .digest("hex");
+    console.log("AMOUNT:", amount);
 
-    if (expectedSignature !== razorpay_signature) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid signature"
-      });
-    }
+    const order = await razorpay.orders.create({
+      amount: amount * 100,
+      currency: "INR",
+      receipt: `receipt_${Date.now()}`
+    });
 
-    await User.findOneAndUpdate(
-      { userId },
-      { isPremium: true },
-      { upsert: true }
-    );
+    console.log("ORDER SUCCESS:", order);
 
     return res.json({
       success: true,
-      message: "Premium activated"
+      order: {
+        id: order.id,
+        amount: order.amount,
+        currency: order.currency
+      },
+      key: process.env.RAZORPAY_KEY_ID
     });
 
   } catch (err) {
+
+    console.error("CREATE ORDER FULL ERROR:");
     console.error(err);
-    res.status(500).json({
+
+    return res.status(500).json({
       success: false,
-      message: "Verification failed"
+      message: err.message
     });
   }
 });
