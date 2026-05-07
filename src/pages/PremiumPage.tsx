@@ -24,15 +24,18 @@ if (!userId) {
   return;
 }
 
-    const orderRes = await fetch(`${API_URL}/api/payment/create-order`, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    userId: localStorage.getItem("userId"),
-  }),
-});
+    const orderRes = await fetch(
+  `${API_URL}/api/payment/create-order`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      amount: 499
+    }),
+  }
+);
 
     const order = await orderRes.json();
 

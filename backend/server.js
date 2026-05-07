@@ -78,13 +78,15 @@ app.post("/api/payment/create-order", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("❌ CREATE ORDER ERROR:", error?.error || error);
 
-    return res.status(500).json({
-      success: false,
-      message: "Order creation failed"
-    });
-  }
+  console.error("❌ FULL RAZORPAY ERROR:");
+  console.error(error);
+
+  return res.status(500).json({
+    success: false,
+    error: error?.error || error?.message || error
+  });
+}
 });
 
 /* ---------------- USER MODEL ---------------- */
