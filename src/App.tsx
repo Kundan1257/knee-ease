@@ -2,7 +2,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
- import PremiumPage from "./pages/PremiumPage";
+ 
 import HomeSection from "./sections/HomeSection";
 import React, { useState, useEffect, useRef, Component, ErrorInfo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
@@ -94,29 +94,14 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         }
 
         setUserIdState(storedUserId);
+      setIsPremiumState(false);
 
-        // OPTIONAL: fetch premium status from backend
-        const res = await fetch(`${API_URL}/user/${storedUserId}`);
+    } catch (e) {
+      console.error("Auth initialization failed:", e);
+    } finally {
+      setIsLoading(false);
+    }
 
-let data = null;
-
-try {
-  data = await res.json();
-} catch (err) {
-  console.warn("Invalid JSON from /user:", err);
-}
-
-if (res.ok && data) {
-  setIsPremiumState(data?.isPremium || false);
-} else {
-  setIsPremiumState(false);
-}
-
-      } catch (e) {
-        console.error("Auth initialization failed:", e);
-      } finally {
-        setIsLoading(false);
-      }
     };
 
     initAuth();
@@ -1459,7 +1444,7 @@ function AppContent() {
               <Route path="/privacy" element={<PrivacyPolicyPage />} />
             
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/premium" element={<PremiumPage />} />
+          
             </Routes>
           </AnimatePresence>
         </main>
